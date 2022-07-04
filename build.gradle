@@ -1,10 +1,16 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id "nebula.release" version "15.3.1"
+    id "nebula.lint" version "17.7.0"
 }
 
 repositories {
     mavenCentral()
+}
+
+gradleLint {
+    rules = ['all-dependency']
 }
 
 gradlePlugin {
@@ -28,6 +34,7 @@ dependencies {
     implementation('com.google.guava:guava:30.1.1-jre')
 
     testImplementation 'junit:junit:' + junit_version
+    testImplementation 'org.mockito:mockito-core:' + mockito_version
     testImplementation 'org.mockito:mockito-inline:' + mockito_version
     testImplementation 'org.mockito:mockito-junit-jupiter:' + mockito_version
     testImplementation 'org.assertj:assertj-core:' + assertj_version
