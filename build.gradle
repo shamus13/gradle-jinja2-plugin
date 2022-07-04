@@ -1,0 +1,34 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenCentral()
+}
+
+gradlePlugin {
+    plugins {
+        jinja2 {
+            id = 'dk.grixie.jinja2.gradle-jinja2-plugin'
+            implementationClass = 'dk.grixie.jinja2.gradle.plugin.Jinja2Plugin'
+        }
+    }
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+    implementation('com.hubspot.jinjava:jinjava:' + jinja2_version) {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    implementation('com.google.guava:guava:30.1.1-jre')
+
+    testImplementation 'junit:junit:' + junit_version
+    testImplementation 'org.mockito:mockito-inline:' + mockito_version
+    testImplementation 'org.mockito:mockito-junit-jupiter:' + mockito_version
+    testImplementation 'org.assertj:assertj-core:' + assertj_version
+}
