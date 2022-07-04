@@ -36,7 +36,7 @@ jobs:
         arguments: test
 
     - name: Publish Test Results
-      uses: shamus13/publish-unit-test-result-action@v1
+      uses: shamus13/gradle-jinja2-plugin@v1
       if: always()
       with:
         files: "build/test-results/**/*.xml"
