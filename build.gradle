@@ -29,14 +29,13 @@ compileJava {
 }
 
 dependencies {
-    implementation('com.hubspot.jinjava:jinjava:' + jinja2_version) {
+    implementation(libs.jinja2) {
         exclude group: 'com.google.guava', module: 'guava'
     }
-    implementation('com.google.guava:guava:30.1.1-jre')
 
-    testImplementation 'junit:junit:' + junit_version
-    testImplementation 'org.mockito:mockito-core:' + mockito_version
-    testImplementation 'org.mockito:mockito-inline:' + mockito_version
-    testImplementation 'org.mockito:mockito-junit-jupiter:' + mockito_version
-    testImplementation 'org.assertj:assertj-core:' + assertj_version
+    implementation(libs.guava)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.bundles.mockito)
+    testImplementation(libs.assertj)
 }
