@@ -29,16 +29,7 @@ public class TemplateEngineTest {
     RegularFileProperty output;
 
     @Test
-    public void testSimpleInlineTemplate() {
-        TemplateEngine engine = new TemplateEngine();
-
-        String message = engine.generate("I am {{ me }}, and you are {{ you }}.", Map.of("me", "Alice", "you", "Bob"));
-
-        assertThat(message).isEqualTo("I am Alice, and you are Bob.");
-    }
-
-    @Test
-    public void testCreateParentDirectories() {
+    public void testCreateOutputDirectory() {
         TemplateEngine engine = new TemplateEngine();
 
         when(template.getAsFile()).thenReturn(templateFileProvider);
@@ -46,7 +37,27 @@ public class TemplateEngineTest {
 
         when(output.getAsFile()).thenReturn(outputFileProvider);
 
-        File outputFile = new File("build/generated/template/testCreateParentDirectoriesOutput");
+        File outputFile = new File("build/generated/template/testCreateOutputDirectoryOutput");
+        when(outputFileProvider.get()).thenReturn(outputFile);
+
+        engine.generate(template,
+                Map.of("to", "Alice", "from", "Bob"),
+                output
+        );
+
+        assertThat(outputFile).exists();
+    }
+
+    @Test
+    public void testCreateDeeplyNestedOutputDirectory() {
+        TemplateEngine engine = new TemplateEngine();
+
+        when(template.getAsFile()).thenReturn(templateFileProvider);
+        when(templateFileProvider.get()).thenReturn(new File(TemplateEngineTest.class.getResource("/template.j2").getFile()));
+
+        when(output.getAsFile()).thenReturn(outputFileProvider);
+
+        File outputFile = new File("build/generated/a/b/c/d/e/f/testCreateDeeplyNestedOutputDirectory");
         when(outputFileProvider.get()).thenReturn(outputFile);
 
         engine.generate(template,

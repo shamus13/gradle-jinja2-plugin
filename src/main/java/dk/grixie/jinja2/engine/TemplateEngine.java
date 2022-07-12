@@ -53,7 +53,7 @@ public class TemplateEngine {
         List<File> directories = new ArrayList<>();
 
         while (current != null && !current.exists() && !directories.contains(current)) {
-            directories.add(current);
+            directories.add(0, current);
 
             current = current.getParentFile();
         }
