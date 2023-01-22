@@ -31,7 +31,7 @@ public class TemplateEngine {
                          final Map<String, Object> dictionary,
                          final RegularFileProperty outputFile) {
         try {
-            String template = new BufferedReader(new FileReader(templateFile.getAsFile().get())).lines().collect(Collectors.joining());
+            String template = new BufferedReader(new FileReader(templateFile.getAsFile().get())).lines().collect(Collectors.joining("\n"));
 
             String content = generate(template, new HashMap<>(dictionary));
 
