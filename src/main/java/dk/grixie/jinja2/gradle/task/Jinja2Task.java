@@ -1,7 +1,7 @@
 package dk.grixie.jinja2.gradle.task;
 
 import dk.grixie.jinja2.engine.TemplateEngine;
-import dk.grixie.jinja2.io.EngineFileUtilility;
+import dk.grixie.jinja2.io.EngineFileUtility;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.TaskAction;
@@ -16,19 +16,22 @@ public class Jinja2Task extends DefaultTask {
 
     Map<String, Object> dictionary;
 
-    private final EngineFileUtilility engineFileUtilility;
+    private final EngineFileUtility engineFileUtility;
     private final TemplateEngine templateEngine;
 
     public Jinja2Task() {
-        this.engineFileUtilility = new EngineFileUtilility();
+        this.engineFileUtility = new EngineFileUtility();
         this.templateEngine = new TemplateEngine();
     }
 
     @TaskAction
     public void generate() {
-        engineFileUtilility.makeParents(output);
+        String t = engineFileUtility.readTemplateFile(engineFileUtility.getInputStreamReader(template));
 
-        templateEngine.generate(engineFileUtilility.getInputStreamReader(template),
-                dictionary, engineFileUtilility.getOutputStreamWriter(output));
+        engineFileUtility.makeParents(output);
+
+        String content = templateEngine.generate(t, dictionary);
+
+        engineFileUtility.writeContent(output, content);
     }
 }

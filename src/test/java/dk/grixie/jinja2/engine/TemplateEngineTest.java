@@ -2,12 +2,7 @@ package dk.grixie.jinja2.engine;
 
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -15,58 +10,31 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class TemplateEngineTest {
 
     @Test
-    public void testGenerateSingleLineTemplate() throws IOException {
+    public void testGenerateSingleLineTemplate() {
         TemplateEngine engine = new TemplateEngine();
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        String content = engine.generate("hello {{ to }} from {{ from }}.", Map.of("to", "Alice", "from", "Bob"));
 
-        engine.generate(new InputStreamReader(TemplateEngineTest.class.getResourceAsStream("/single-line-template.j2")),
-                Map.of("to", "Alice", "from", "Bob"),
-                new OutputStreamWriter(byteArrayOutputStream)
-        );
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())));
-
-        assertThat(reader.readLine()).isEqualTo("hello Alice from Bob.");
-        assertThat(reader.readLine()).isNull();
+        assertThat(content).isEqualTo("hello Alice from Bob.");
     }
 
     @Test
-    public void testGenerateTwoLineTemplate() throws IOException {
+    public void testGenerateTwoLineTemplate() {
         TemplateEngine engine = new TemplateEngine();
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        String content = engine.generate("hello {{ to }} from {{ from }}.\n" +
+                "Best regards to {{ regards }} as well.", Map.of("to", "Alice", "from", "Bob", "regards", "your friend"));
 
-        engine.generate(new InputStreamReader(TemplateEngineTest.class.getResourceAsStream("/double-line-template.j2")),
-                Map.of("to", "Alice", "from", "Bob", "regards", "your friend"),
-                new OutputStreamWriter(byteArrayOutputStream)
-        );
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())));
-
-        assertThat(reader.readLine()).isEqualTo("hello Alice from Bob.");
-        assertThat(reader.readLine()).isEqualTo("Best regards to your friend as well.");
-        assertThat(reader.readLine()).isNull();
+        assertThat(content).isEqualTo("hello Alice from Bob.\nBest regards to your friend as well.");
     }
 
     @Test
     public void testGenerateBlankLineTemplate() throws IOException {
         TemplateEngine engine = new TemplateEngine();
 
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        String content = engine.generate("\nhello {{ to }} from {{ from }}.\n\n" +
+                "Best regards to {{ regards }} as well.\n", Map.of("to", "Alice", "from", "Bob", "regards", "your friend"));
 
-        engine.generate(new InputStreamReader(TemplateEngineTest.class.getResourceAsStream("/blank-lines-template.j2")),
-                Map.of("to", "Alice", "from", "Bob", "regards", "your friend"),
-                new OutputStreamWriter(byteArrayOutputStream)
-        );
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())));
-
-        assertThat(reader.readLine()).isEqualTo("");
-        assertThat(reader.readLine()).isEqualTo("hello Alice from Bob.");
-        assertThat(reader.readLine()).isEqualTo("");
-        assertThat(reader.readLine()).isEqualTo("Best regards to your friend as well.");
-        assertThat(reader.readLine()).isEqualTo("");
-        assertThat(reader.readLine()).isNull();
+        assertThat(content).isEqualTo("\nhello Alice from Bob.\n\nBest regards to your friend as well.\n");
     }
 }
