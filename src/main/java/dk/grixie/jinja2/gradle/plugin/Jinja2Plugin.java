@@ -1,6 +1,7 @@
 package dk.grixie.jinja2.gradle.plugin;
 
 import dk.grixie.jinja2.engine.TemplateEngine;
+import dk.grixie.jinja2.io.EngineFileUtilility;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
@@ -8,9 +9,11 @@ import java.util.Optional;
 
 public class Jinja2Plugin implements Plugin<Project> {
 
+    private final EngineFileUtilility engineFileUtilility;
     private final TemplateEngine templateEngine;
 
     public Jinja2Plugin() {
+        this.engineFileUtilility = new EngineFileUtilility();
         this.templateEngine = new TemplateEngine();
     }
 
@@ -27,7 +30,10 @@ public class Jinja2Plugin implements Plugin<Project> {
                                             (Jinja2PluginExtension) task.getProject().getExtensions().findByName("jinja2"))
                                     .orElse(new Jinja2PluginExtension());
 
-                            templateEngine.generate(data.getTemplate(), data.getDictionary(), data.getOutput());
+                            engineFileUtilility.makeParents(data.getOutput());
+
+                            templateEngine.generate(engineFileUtilility.getInputStreamReader(data.getTemplate()),
+                                    data.getDictionary(), engineFileUtilility.getOutputStreamWriter(data.getOutput()));
                         }
                 );
     }

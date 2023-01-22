@@ -1,70 +1,33 @@
 package dk.grixie.jinja2.engine;
 
-import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.provider.Provider;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
 public class TemplateEngineTest {
 
-    @Mock
-    Provider<File> templateFileProvider;
-
-    @Mock
-    RegularFileProperty template;
-
-    @Mock
-    Provider<File> outputFileProvider;
-
-    @Mock
-    RegularFileProperty output;
-
     @Test
-    public void testCreateOutputDirectory() {
+    public void testGenerateSingleLineTemplate() throws IOException {
         TemplateEngine engine = new TemplateEngine();
 
-        when(template.getAsFile()).thenReturn(templateFileProvider);
-        when(templateFileProvider.get()).thenReturn(new File(TemplateEngineTest.class.getResource("/template.j2").getFile()));
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        when(output.getAsFile()).thenReturn(outputFileProvider);
-
-        File outputFile = new File("build/generated/template/testCreateOutputDirectoryOutput");
-        when(outputFileProvider.get()).thenReturn(outputFile);
-
-        engine.generate(template,
+        engine.generate(new InputStreamReader(TemplateEngineTest.class.getResourceAsStream("/template.j2")),
                 Map.of("to", "Alice", "from", "Bob"),
-                output
+                new OutputStreamWriter(byteArrayOutputStream)
         );
 
-        assertThat(outputFile).exists();
-    }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(byteArrayOutputStream.toByteArray())));
 
-    @Test
-    public void testCreateDeeplyNestedOutputDirectory() {
-        TemplateEngine engine = new TemplateEngine();
-
-        when(template.getAsFile()).thenReturn(templateFileProvider);
-        when(templateFileProvider.get()).thenReturn(new File(TemplateEngineTest.class.getResource("/template.j2").getFile()));
-
-        when(output.getAsFile()).thenReturn(outputFileProvider);
-
-        File outputFile = new File("build/generated/a/b/c/d/e/f/testCreateDeeplyNestedOutputDirectory");
-        when(outputFileProvider.get()).thenReturn(outputFile);
-
-        engine.generate(template,
-                Map.of("to", "Alice", "from", "Bob"),
-                output
-        );
-
-        assertThat(outputFile).exists();
+        assertThat(reader.readLine()).isEqualTo("hello Alice from Bob.");
+        assertThat(reader.readLine()).isNull();
     }
 }
