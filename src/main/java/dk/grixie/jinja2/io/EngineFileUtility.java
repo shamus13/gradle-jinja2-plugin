@@ -1,8 +1,5 @@
 package dk.grixie.jinja2.io;
 
-import dk.grixie.jinja2.gradle.exception.Jinja2Exceptions;
-import org.gradle.api.file.RegularFileProperty;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,10 +7,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.logging.Logger;
+import org.gradle.api.logging.Logging;
+
+import dk.grixie.jinja2.gradle.exception.Jinja2Exceptions;
 
 public class EngineFileUtility {
+    private final Logger logger = Logging.getLogger(getClass());
 
     public String readTemplateFile(final InputStreamReader inputStreamReader) {
 
@@ -36,19 +38,25 @@ public class EngineFileUtility {
     }
 
     public void makeParents(final RegularFileProperty fileProperty) {
-        List<File> directories = new ArrayList<>();
+        File file = fileProperty.getAsFile().get();
 
-        File current = fileProperty.getAsFile().get();
-
-        while (current != null && !current.exists() && !directories.contains(current)) {
-            directories.add(0, current);
-
-            current = current.getParentFile();
+        File parent = file.getParentFile();
+        if (parent == null) {
+            logger.warn("Failed to read parent directory of {}", file.getPath());
+            return;
         }
 
-        for (File file : directories) {
-            file.mkdir();
+        if (parent.exists()) {
+            logger.debug("Directory {} already exists", parent.getPath());
+            return;
         }
+
+        if (parent.mkdirs()) {
+            logger.debug("Successfully created directory", parent.getPath());
+            return;
+        }
+
+        throw new IllegalArgumentException("Filed to create directory " + parent.getPath());
     }
 
     public void writeContent(final RegularFileProperty fileProperty, final String content) {

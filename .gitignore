@@ -13,6 +13,7 @@
 #Gradle folders
 .gradle
 build
+bin/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -28,3 +29,9 @@ build
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# Direnv configuration
+.envrc
+
+# VSCode configuration
+.vscode/
