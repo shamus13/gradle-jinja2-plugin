@@ -70,24 +70,28 @@ public class EngineFileUtilityTest {
     @Test
     public void testMakeNotNestedOutputDirectory() {
         File outputFile = new File("build/testCreateDeeplyNestedOutputDirectory");
+        File outputDirectory = outputFile.getParentFile();
+
         when(fileProvider.get()).thenReturn(outputFile);
         when(fileProperty.getAsFile()).thenReturn(fileProvider);
 
         EngineFileUtility engineFileUtility = new EngineFileUtility();
         engineFileUtility.makeParents(fileProperty);
 
-        assertThat(outputFile).exists();
+        assertThat(outputDirectory).exists();
     }
 
     @Test
     public void testMakeDeeplyNestedOutputDirectory() {
         File outputFile = new File("build/a/b/c/d/e/f/testCreateDeeplyNestedOutputDirectory");
+        File outputDirectory = outputFile.getParentFile();
+
         when(fileProvider.get()).thenReturn(outputFile);
         when(fileProperty.getAsFile()).thenReturn(fileProvider);
 
         EngineFileUtility engineFileUtility = new EngineFileUtility();
         engineFileUtility.makeParents(fileProperty);
 
-        assertThat(outputFile).exists();
+        assertThat(outputDirectory).exists();
     }
 }
