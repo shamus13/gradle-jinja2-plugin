@@ -16,23 +16,17 @@ gradleLint {
     rules = ['all-dependency']
 }
 
-pluginBundle {
+gradlePlugin {
     website = 'https://github.com/shamus13/gradle-jinja2-plugin'
     vcsUrl = 'https://github.com/shamus13/gradle-jinja2-plugin'
 
-    description = 'Gradle plugin for generating files based on Jinja2 templates. The plugin uses jinjava as template engine.'
-
-    pluginTags = [
-            jinja2: ['jinja2'],
-    ]
-}
-
-gradlePlugin {
     plugins {
         jinja2 {
             id = 'dk.grixie.jinja2.gradle-jinja2-plugin'
             implementationClass = 'dk.grixie.jinja2.gradle.plugin.Jinja2Plugin'
             displayName = 'Jinja2 plugin'
+            description = 'Gradle plugin for generating files based on Jinja2 templates. The plugin uses jinjava as template engine.'
+            tags.getMetaPropertyValues().add(jinja2)
         }
     }
 }
